@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FAQ Bot - Centro Master (demo)</title>
+<style>
+  :root{--accent:#0b5fff;--bg:#f6f7fb;--card:#ffffff}
+  body{margin:0;font-family:Segoe UI,Arial,Helvetica,sans-serif;background:var(--bg);color:#222}
+  .wrap{max-width:900px;margin:22px auto;padding:18px}
+  .header{display:flex;align-items:center;gap:14px}
+  .logo{font-size:28px}
+  h1{margin:0;color:var(--accent);font-size:26px}
+  .subtitle{margin:6px 0 16px;color:#444}
+  .chat{background:var(--card);border-radius:10px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+  .controls{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+  input[type="search"]{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,.12);min-width:160px}
+  button{background:var(--accent);color:#fff;padding:10px 12px;border-radius:8px;border:none;cursor:pointer}
+  .messages{max-height:420px;overflow:auto;padding:6px;display:flex;flex-direction:column;gap:10px}
+  .msg.user{align-self:flex-end;background:#0b5fff;color:#fff;padding:10px 12px;border-radius:12px;max-width:78%}
+  .msg.bot{align-self:flex-start;background:#f3f6ff;color:#222;padding:10px 12px;border-radius:12px;max-width:78%}
+  .small{font-size:13px;color:#666;margin-top:6px}
+  .suggestions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chip{background:#eef3ff;border:1px solid rgba(11,91,255,.12);padding:6px 10px;border-radius:999px;cursor:pointer}
+  .result-title{font-weight:700;margin-bottom:6px}
+  .result-cat{font-size:12px;color:var(--accent);margin-top:8px;display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid rgba(11,91,255,.12)}
+  footer{margin-top:12px;font-size:13px;color:#666}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">❓</div>
+    <div>
+      <h1>Preguntas Frecuentes — Chat</h1>
+      <div class="subtitle">Pregunta y el bot te responde con la mejor coincidencia (basado en la FAQ del centro).</div>
+    </div>
+  </div>
+
+  <div class="chat" role="application" aria-label="Chat FAQ">
+    <div class="controls">
+      <input id="q" type="search" placeholder="Escribe tu pregunta... (p. ej. 'cómo cambio mi contraseña')" />
+      <button id="ask">Preguntar</button>
+    </div>
+
+    <div class="messages" id="messages" aria-live="polite"></div>
+
+    <div class="small">Sugerencias rápidas:</div>
+    <div class="suggestions" id="suggestions"></div>
+    <footer>Fuente: JSON estático incorporado (sin IA) · Gratis</footer>
+  </div>
+</div>
+
+<script>
+/* === JSON estático: sustituye por tu propio staticJson === */
+const FAQ = [
+  {"Title":"¿Cómo cambio mi contraseña?","Answer":"Ve a Microsoft 365 > Mi cuenta > Seguridad > Restablecer contraseña.\\nSi tienes MFA, aprueba en Authenticator.","Category":"IT"},
+  {"Title":"No me llega el código MFA, ¿qué hago?","Answer":"Abre Microsoft Authenticator y sincroniza.\\nSi sigue sin funcionar, abre un ticket: Intranet > Incidencias IT.","Category":"IT"},
+  {"Title":"¿Cómo conecto OneDrive en mi PC?","Answer":"Abre la app OneDrive, inicia sesión con tu cuenta corporativa y elige la carpeta “Centro Master”.","Category":"IT"},
+  {"Title":"¿Cómo solicito vacaciones?","Answer":"Intranet > RRHH > Vacaciones > Nueva solicitud.\\nRecibirás confirmación por correo.","Category":"RRHH"},
+  {"Title":"¿Dónde consulto mi nómina?","Answer":"Intranet > RRHH > Documentos personales > Nóminas.","Category":"RRHH"},
+  {"Title":"¿Cómo pido un justificante laboral?","Answer":"En RRHH > Solicitudes > Nuevo > Justificante.","Category":"RRHH"},
+  {"Title":"¿Dónde veo los cursos activos?","Answer":"Intranet > Departamento de Cursos > Cursos activos.","Category":"Formación"},
+  {"Title":"¿Dónde encuentro los manuales de formación?","Answer":"Intranet > Biblioteca 'Formación' > Carpeta Manuales.","Category":"Formación"},
+  {"Title":"¿Cómo abro un ticket de soporte general?","Answer":"Intranet > Incidencias > Nuevo.\\nRecibirás número de seguimiento por correo.","Category":"Administración"},
+  {"Title":"¿Cómo solicito material de oficina?","Answer":"Intranet > Administración > Solicitudes > Nuevo.","Category":"Administración"}
+];
+
+/* === utilidades de matching (token overlap simple + puntuación) === */
+function tokenize(s){
+  return (s||'').toLowerCase().replace(/[^\w\sáéíóúñü]/g,' ').split(/\s+/).filter(Boolean);
+}
+function scoreQuery(query, item){
+  const qTokens = tokenize(query);
+  const titleTokens = tokenize(item.Title);
+  const answerTokens = tokenize(item.Answer);
+  // peso: título 2x, respuesta 1x
+  const set = (arr)=>{ const m={}; arr.forEach(t=>m[t]=(m[t]||0)+1); return m; };
+  const tMap = set(titleTokens);
+  const aMap = set(answerTokens);
+  let score=0;
+  qTokens.forEach(tok=>{
+    if(tMap[tok]) score += 3;
+    else if(aMap[tok]) score += 1;
+    // coincidencia por prefijo
+    for(const tt of Object.keys(tMap)) if(tt.startsWith(tok)) score += 2;
+  });
+  // cubrir coincidencias de frases (bonus)
+  const q = query.toLowerCase();
+  if(item.Title.toLowerCase().includes(q)) score += 6;
+  if(item.Answer.toLowerCase().includes(q)) score += 2;
+  return score;
+}
+function findBestMatches(query, maxResults=3){
+  if(!query || !query.trim()) return [];
+  const scored = FAQ.map(it=>({it, sc: scoreQuery(query, it)}));
+  scored.sort((a,b)=>b.sc - a.sc);
+  return scored.filter(s=>s.sc>0).slice(0,maxResults).map(s=>s.it);
+}
+
+/* === UI === */
+const messages = document.getElementById('messages');
+const suggestions = document.getElementById('suggestions');
+const qinput = document.getElementById('q');
+const askBtn = document.getElementById('ask');
+
+function addMsg(content, who='bot'){
+  const div = document.createElement('div');
+  div.className = 'msg '+(who==='user'?'user':'bot');
+  div.innerHTML = content.replace(/\\n/g,'<br>');
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function showSuggestions(){
+  suggestions.innerHTML = '';
+  const cats = [...new Set(FAQ.map(i=>i.Category))].slice(0,6);
+  cats.forEach(c=>{
+    const chip = document.createElement('button');
+    chip.className='chip';
+    chip.innerText = c;
+    chip.onclick = ()=> {
+      qinput.value = c;
+      ask();
+    };
+    suggestions.appendChild(chip);
+  });
+}
+
+/* cuando se pregunta */
+function ask(){
+  const q = qinput.value.trim();
+  if(!q) return;
+  addMsg(q,'user');
+  qinput.value = '';
+  // buscar coincidencias
+  const matches = findBestMatches(q, 5);
+  if(matches.length === 0){
+    addMsg('Lo siento — no he encontrado una respuesta exacta. Prueba reformular la pregunta o usa el buscador de la intranet.', 'bot');
+    // sugerir preguntas relacionadas
+    const sample = FAQ.slice(0,4).map(i=>`• ${i.Title}`).join('<br>');
+    addMsg('<b>Preguntas relacionadas:</b><br>' + sample, 'bot');
+    return;
+  }
+  // mostrar mejor resultado y alternativas
+  const best = matches[0];
+  let html = `<div class="result-title">${best.Title}</div>`;
+  html += `<div>${best.Answer.replace(/\\n/g,'<br>')}</div>`;
+  html += `<div class="result-cat">${best.Category || ''}</div>`;
+  addMsg(html, 'bot');
+
+  if(matches.length>1){
+    const more = matches.slice(1).map(m=>`<div style="margin-top:8px">🔹 <b>${m.Title}</b><br>${m.Answer.split('\\n')[0]}</div>`).join('');
+    addMsg('<b>Otras coincidencias:</b><br>' + more, 'bot');
+  }
+}
+
+/* eventos */
+askBtn.addEventListener('click', ask);
+qinput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') ask(); });
+
+/* inicial */
+showSuggestions();
+addMsg('Hola — pregúntame algo sobre IT, RRHH, Formación o Administración. Por ejemplo: "¿Cómo cambio mi contraseña?"');
+</script>
+</body>
+</html>
