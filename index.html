@@ -192,13 +192,38 @@ const FAQ = [
     "Answer": "Intranet > Peticiones > Nuevo.\nRecibirás número de seguimiento por correo.",
     "Category": "Administración"
   },
+
+  /* === CAMBIO SOLICITADO === */
   {
     "Title": "¿Cómo solicito material de oficina?",
-    "Answer": "Intranet > Administración > Solicitudes > Nuevo.",
+    "Answer": "Intranet > Peticiones > Nuevo.",
+    "Category": "Administración"
+  },
+
+  /* === NUEVAS PREGUNTAS === */
+  {
+    "Title": "¿Cómo abro un ticket de Incidencias?",
+    "Answer": "Intranet > Incidencias > Nuevo.",
+    "Category": "Administración"
+  },
+  {
+    "Title": "¿Cómo accedo a la base de datos del centro?",
+    "Answer": "En el lado derecho de esta misma página encontrarás los accesos a las diferentes carpetas de \"Datos\".\nRecuerda que solo podrás acceder a aquellas carpetas para las que tengas permiso.",
+    "Category": "Administración"
+  },
+  {
+    "Title": "¿Cómo solicito acceso a una carpeta de \"Datos\"?",
+    "Answer": "Deberás realizar una petición al departamento de Informática siguiendo el procedimiento de Peticiones: Intranet > Peticiones > Nuevo.\nIndica la carpeta y el motivo.",
+    "Category": "Administración"
+  },
+  {
+    "Title": "¿Cómo puedo contactar de manera rápida con los compañeros?",
+    "Answer": "En la parte inferior derecha de tu pantalla puedes ver un desplegable llamado Microsoft Teams.\nDesde ahí tendrás la posibilidad de mensajearte con los compañeros de una forma rápida y sencilla.",
     "Category": "Administración"
   }
 ];
 </script>
+
 
 
 /* ========= Utilidades de matching ========= */
@@ -274,10 +299,10 @@ function showSuggestions(){
   suggestions.innerHTML = '';
   const tops = [
   "¿Cómo cambio mi contraseña?",
-  "No me llega el código MFA",
-  "¿Cómo conecto OneDrive?",
-  "Solicitar vacaciones",
-  "¿Dónde consulto mi nómina?"
+  "¿Cómo abro un ticket de Incidencias?",
+  "¿Cómo solicito material de oficina?",
+  "¿Cómo accedo a la base de datos del centro?",
+  "Solicitar vacaciones"
 ];
   
   tops.forEach(text=>{
@@ -333,6 +358,7 @@ addRow('¡Hola! 👋 Puedo ayudarte con dudas sobre IT, RRHH, Formación y Admin
 </script>
 </body>
 </html>
+
 
 
 
