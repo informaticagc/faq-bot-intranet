@@ -101,17 +101,6 @@
     .bubble.bot{background:#1b2433;color:#e9eef9;border-color:#1f2a3a}
   }
 
-  .suggestions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
-  .chip{
-    background:#eef3ff;border:1px solid rgba(11,95,255,.15);color:#1e2a55;
-    padding:8px 12px;border-radius:999px;cursor:pointer;font-size:13px
-  }
-  @media (prefers-color-scheme: dark){
-    .chip{background:#1b2433;color:#dfe7ff;border-color:#1f2a3a}
-  }
-  .chip:focus{outline:none;box-shadow:var(--ring)}
-  .chip:hover{filter:brightness(.98)}
-
   .small{font-size:13px;color:var(--muted);margin-top:8px}
   .footer{margin-top:12px;font-size:12.5px;color:var(--muted)}
 
@@ -128,6 +117,18 @@
     0%,80%,100%{transform:translateY(0);opacity:.5}
     40%{transform:translateY(-4px);opacity:1}
   }
+
+  /* ========= Select de sugerencias ========= */
+  .suggestions{margin-top:12px}
+  .suggestSel{
+    padding:12px 14px;
+    border:1px solid rgba(0,0,0,.12);
+    border-radius:999px;
+    background:transparent;
+    color:var(--text);
+    min-width:280px;
+  }
+  .suggestSel:focus{outline:none; box-shadow:var(--ring); border-color:transparent}
 </style>
 </head>
 <body>
@@ -152,8 +153,14 @@
 
       <div class="messages" id="messages" aria-live="polite"></div>
 
-      <div class="small">Sugerencias rápidas:</div>
-      <div class="suggestions" id="suggestions"></div>
+      <!-- Desplegable de preguntas (agrupado por categorías) -->
+      <label class="small" for="suggestSel">Preguntas frecuentes:</label>
+      <div class="suggestions">
+        <select id="suggestSel" class="suggestSel" aria-label="Preguntas frecuentes">
+          <option value="">— Selecciona una pregunta —</option>
+        </select>
+      </div>
+
       <div class="footer">Fuente: JSON estático (sin IA). Actualiza las Q/A editando tu repositorio.</div>
     </div>
   </div>
@@ -233,7 +240,6 @@ function scoreQuery(query, item){
   qTokens.forEach(tok=>{
     if(tSet.has(tok)) score += 3;
     else if(aSet.has(tok)) score += 1;
-    // prefijo aproximado en título
     tTokens.forEach(tt=>{ if(tt.startsWith(tok)) score += 2; });
   });
   const q = query.toLowerCase();
@@ -249,9 +255,44 @@ function findBestMatches(query, maxResults=4){
 
 /* ========= UI ========= */
 const messages = document.getElementById('messages');
-const suggestions = document.getElementById('suggestions');
 const qinput = document.getElementById('q');
 const askBtn = document.getElementById('ask');
+
+/* Sugerencias como <select> agrupado por categoría */
+function showSuggestions(){
+  const sel = document.getElementById('suggestSel');
+  if(!sel) return;
+  sel.innerHTML = `<option value="">— Selecciona una pregunta —</option>`;
+
+  const byCat = FAQ.reduce((acc, item)=>{
+    const cat = item.Category || 'Sin categoría';
+    (acc[cat] ||= []).push(item);
+    return acc;
+  }, {});
+  const cats = Object.keys(byCat).sort((a,b)=>a.localeCompare(b,'es'));
+  cats.forEach(cat=>{
+    const og = document.createElement('optgroup');
+    og.label = cat;
+    byCat[cat]
+      .sort((a,b)=> (a.Title||'').localeCompare(b.Title||'', 'es'))
+      .forEach(item=>{
+        const opt = document.createElement('option');
+        opt.value = item.Title;
+        opt.textContent = item.Title;
+        og.appendChild(opt);
+      });
+    sel.appendChild(og);
+  });
+
+  sel.addEventListener('change', ()=>{
+    const val = sel.value;
+    if(val){
+      qinput.value = val;
+      ask();
+      sel.value = ""; // volver al placeholder
+    }
+  });
+}
 
 function addRow(html, who='bot'){
   const row = document.createElement('div');
@@ -287,23 +328,6 @@ function typingOff(){
   if(t) t.remove();
 }
 
-function showSuggestions(){
-  suggestions.innerHTML = '';
-  const tops = [
-    "¿Cómo cambio mi contraseña?",
-    "¿Cómo abro un ticket de Incidencias?",
-    "¿Cómo solicito material de oficina?",
-    "¿Cómo accedo a la base de datos del centro?",
-    "Solicitar vacaciones"
-  ];
-  tops.forEach(text=>{
-    const b = document.createElement('button');
-    b.className='chip'; b.textContent=text; b.setAttribute('aria-label', 'Sugerencia: ' + text);
-    b.onclick=()=>{ qinput.value = text; ask(); };
-    suggestions.appendChild(b);
-  });
-}
-
 /* ========= Flujo ========= */
 function ask(){
   const q = (qinput.value||'').trim();
@@ -312,7 +336,6 @@ function ask(){
   qinput.value = '';
   typingOn();
 
-  // Simular breve "pensando"
   setTimeout(()=>{
     const matches = findBestMatches(q, 5);
     typingOff();
@@ -345,10 +368,12 @@ qinput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') ask(); });
 
 /* inicio */
 showSuggestions();
-addRow('¡Hola! 👋 Puedo ayudarte con dudas sobre IT, RRHH, Formación y Administración. Escribe tu pregunta o elige una sugerencia.');
+addRow('¡Hola! 👋 Puedo ayudarte con dudas sobre IT, RRHH, Formación y Administración. Escribe tu pregunta o selecciona una del desplegable.');
 </script>
 </body>
 </html>
+
+
 
 
 
