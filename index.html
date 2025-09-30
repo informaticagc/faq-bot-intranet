@@ -160,18 +160,46 @@
 
 <script>
 /* ========= JSON de FAQ: edita aquí o carga faq.json con fetch ========= */
+<script>
 const FAQ = [
-  {"Title":"¿Cómo cambio mi contraseña?","Answer":"Ve a Microsoft 365 > Mi cuenta > Seguridad > Restablecer contraseña.\nSi tienes MFA, aprueba en Authenticator.","Category":"IT"},
-  {"Title":"No me llega el código MFA, ¿qué hago?","Answer":"Abre Microsoft Authenticator y sincroniza.\nSi sigue sin funcionar, abre un ticket: Intranet > Incidencias IT.","Category":"IT"},
-  {"Title":"¿Cómo conecto OneDrive en mi PC?","Answer":"Abre la app OneDrive, inicia sesión con tu cuenta corporativa y elige la carpeta “Centro Master”.","Category":"IT"},
-  {"Title":"¿Cómo solicito vacaciones?","Answer":"Intranet > RRHH > Vacaciones > Nueva solicitud.\nRecibirás confirmación por correo.","Category":"RRHH"},
-  {"Title":"¿Dónde consulto mi nómina?","Answer":"Intranet > RRHH > Documentos personales > Nóminas.","Category":"RRHH"},
-  {"Title":"¿Cómo pido un justificante laboral?","Answer":"En RRHH > Solicitudes > Nuevo > Justificante.","Category":"RRHH"},
-  {"Title":"¿Dónde veo los cursos activos?","Answer":"Intranet > Departamento de Cursos > Cursos activos.","Category":"Formación"},
-  {"Title":"¿Dónde encuentro los manuales de formación?","Answer":"Intranet > Biblioteca “Formación” > Carpeta Manuales.","Category":"Formación"},
-  {"Title":"¿Cómo abro un ticket de soporte general?","Answer":"Intranet > Incidencias > Nuevo.\nRecibirás número de seguimiento por correo.","Category":"Administración"},
-  {"Title":"¿Cómo solicito material de oficina?","Answer":"Intranet > Administración > Solicitudes > Nuevo.","Category":"Administración"}
+  {
+    "Title": "¿Cómo cambio mi contraseña?",
+    "Answer": "Ve a Microsoft 365 > Tu foto o iniciales > Ver cuenta > Cambiar contraseña.\nSi tienes MFA, aprueba en Authenticator o si lo prefieres pulsa omitir para saltarte este paso.",
+    "Category": "IT"
+  },
+  {
+    "Title": "No me llega el código MFA, ¿qué hago?",
+    "Answer": "Abre Microsoft Authenticator y sincroniza.\nSi sigue sin funcionar, abre un ticket: Intranet > Incidencias IT.",
+    "Category": "IT"
+  },
+  {
+    "Title": "¿Cómo conecto OneDrive en mi PC?",
+    "Answer": "Abre la aplicación OneDrive, inicia sesión con tu cuenta corporativa y elige la carpeta “Centro Master”.",
+    "Category": "IT"
+  },
+  {
+    "Title": "¿Cómo solicito vacaciones?",
+    "Answer": "Intranet > Turnos > Vacaciones > Nueva solicitud.\nRecibirás confirmación por correo.",
+    "Category": "RRHH"
+  },
+  {
+    "Title": "¿Dónde consulto mi nómina?",
+    "Answer": "Recibirás un correo a tu cuenta corporativa con un permiso de acceso a tu carpeta personal con tu documentación.",
+    "Category": "RRHH"
+  },
+  {
+    "Title": "¿Cómo abro un ticket de peticiones?",
+    "Answer": "Intranet > Peticiones > Nuevo.\nRecibirás número de seguimiento por correo.",
+    "Category": "Administración"
+  },
+  {
+    "Title": "¿Cómo solicito material de oficina?",
+    "Answer": "Intranet > Administración > Solicitudes > Nuevo.",
+    "Category": "Administración"
+  }
 ];
+</script>
+
 
 /* ========= Utilidades de matching ========= */
 function tokenize(s){
@@ -245,12 +273,13 @@ function typingOff(){
 function showSuggestions(){
   suggestions.innerHTML = '';
   const tops = [
-    "¿Cómo cambio mi contraseña?",
-    "Solicitar vacaciones",
-    "Manual de OneDrive",
-    "Abrir ticket IT",
-    "Ver nómina"
-  ];
+  "¿Cómo cambio mi contraseña?",
+  "No me llega el código MFA",
+  "¿Cómo conecto OneDrive?",
+  "Solicitar vacaciones",
+  "¿Dónde consulto mi nómina?"
+];
+  
   tops.forEach(text=>{
     const b = document.createElement('button');
     b.className='chip'; b.textContent=text; b.setAttribute('aria-label', 'Sugerencia: ' + text);
@@ -304,6 +333,7 @@ addRow('¡Hola! 👋 Puedo ayudarte con dudas sobre IT, RRHH, Formación y Admin
 </script>
 </body>
 </html>
+
 
 
 
