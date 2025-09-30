@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
@@ -54,20 +54,16 @@
 <script>
 /* === JSON estático: sustituye por tu propio staticJson === */
 const FAQ = [
-  {"Title":"¿Cómo cambio mi contraseña?","Answer":"Ve a Microsoft 365 > Pulsa en tu inicial (arriba a la derecha) > Ver cuenta > Cambiar contraseña.\\nSi tienes MFA, aprueba en Authenticator o si lo prefieres pulsa Omitir para evitar la aprobación en Authenticator.","Category":"IT"},
+  {"Title":"¿Cómo cambio mi contraseña?","Answer":"Ve a Microsoft 365 > Mi cuenta > Seguridad > Restablecer contraseña.\\nSi tienes MFA, aprueba en Authenticator.","Category":"IT"},
   {"Title":"No me llega el código MFA, ¿qué hago?","Answer":"Abre Microsoft Authenticator y sincroniza.\\nSi sigue sin funcionar, abre un ticket: Intranet > Incidencias IT.","Category":"IT"},
   {"Title":"¿Cómo conecto OneDrive en mi PC?","Answer":"Abre la app OneDrive, inicia sesión con tu cuenta corporativa y elige la carpeta “Centro Master”.","Category":"IT"},
-  {"Title":"¿Cómo accedo a mi departamento en la Intranet?","Answer":"Ve a la parte superior de la página y verás un navegador, uno de los enlaces es el de "Departamentos", despliégalo y verás los enlaces a los distintos departamentos.\\nRecuerda que solo podrás acceder si tienes permiso. En caso de no tenerlo deberás solicitarlo al departamento de TI","Category":"IT"},
   {"Title":"¿Cómo solicito vacaciones?","Answer":"Intranet > RRHH > Vacaciones > Nueva solicitud.\\nRecibirás confirmación por correo.","Category":"RRHH"},
-  {"Title":"¿Dónde consulto mi nómina?","Answer":"Recibirás en tu correo un acceso a tu espacio personal donde podrás encontrar, entre otras cosas, tus nóminas. En caso de no haber recibido el acceso puedes solicitarlo al departamento de RRHH.","Category":"RRHH"},
-  {"Title":"¿Cómo puedo informarme de los eventos de la empresa?","Answer":"Intranet > Próximos Eventos.\\nSe irán publicando cuando sea necesario.","Category":"RRHH"},
-  {"Title":"¿Cómo contacto con los compañeros?","Answer":"En la parte inferior derecha tienes un desplegable con acceso a Teams mediante el que podrás comunicarte. También tienes a tu disposición una agenda de contactos.","Category":"RRHH"},
-  {"Title":"¿Cómo accedo a la base de datos del centro?","Answer":"En la parte superio de esta misma línea por la que nos estamos comunicando verás el apartado "Datos" con los enlaces a las diferentes carpetas. Ten en cuenta que debes tener permiso de acceso.","Category":"IT"},
-  {"Title":"¿Cómo abro un ticket de Incidencias?","Answer":"Intranet > Incidencias > Nuevo.\\nRecibirás número de seguimiento por correo.","Category":"Administración"},
-  {"Title":"¿Cómo abro un ticket de peticiones?","Answer":"Intranet > Peticiones > Nuevo.\\nRecibirás número de seguimiento por correo.","Category":"Administración"},
-  {"Title":"¿Qué se considera Incidencia?","Answer":"Una incidencia será todo aquello que necesite una reparación.","Category":"Administración"},
-  {"Title":"¿Qué se considera Petición?","Answer":"Una petición será todo aquello que no implique una reparación, compras, permisos, etc.","Category":"Administración"},
-  {"Title":"¿Cómo solicito material de oficina?","Answer":"Intranet > Peticiones > Nuevo.","Category":"Administración"}
+  {"Title":"¿Dónde consulto mi nómina?","Answer":"Intranet > RRHH > Documentos personales > Nóminas.","Category":"RRHH"},
+  {"Title":"¿Cómo pido un justificante laboral?","Answer":"En RRHH > Solicitudes > Nuevo > Justificante.","Category":"RRHH"},
+  {"Title":"¿Dónde veo los cursos activos?","Answer":"Intranet > Departamento de Cursos > Cursos activos.","Category":"Formación"},
+  {"Title":"¿Dónde encuentro los manuales de formación?","Answer":"Intranet > Biblioteca 'Formación' > Carpeta Manuales.","Category":"Formación"},
+  {"Title":"¿Cómo abro un ticket de soporte general?","Answer":"Intranet > Incidencias > Nuevo.\\nRecibirás número de seguimiento por correo.","Category":"Administración"},
+  {"Title":"¿Cómo solicito material de oficina?","Answer":"Intranet > Administración > Solicitudes > Nuevo.","Category":"Administración"}
 ];
 
 /* === utilidades de matching (token overlap simple + puntuación) === */
@@ -169,6 +165,8 @@ addMsg('Hola — pregúntame algo sobre IT, RRHH, Formación o Administración. 
 </script>
 </body>
 </html>
+
+
 
 
 
