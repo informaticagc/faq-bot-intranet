@@ -159,8 +159,7 @@
   </div>
 
 <script>
-/* ========= JSON de FAQ: edita aquí o carga faq.json con fetch ========= */
-<script>
+/* ========= JSON de FAQ ========= */
 const FAQ = [
   {
     "Title": "¿Cómo cambio mi contraseña?",
@@ -192,15 +191,11 @@ const FAQ = [
     "Answer": "Intranet > Peticiones > Nuevo.\nRecibirás número de seguimiento por correo.",
     "Category": "Administración"
   },
-
-  /* === CAMBIO SOLICITADO === */
   {
     "Title": "¿Cómo solicito material de oficina?",
     "Answer": "Intranet > Peticiones > Nuevo.",
     "Category": "Administración"
   },
-
-  /* === NUEVAS PREGUNTAS === */
   {
     "Title": "¿Cómo abro un ticket de Incidencias?",
     "Answer": "Intranet > Incidencias > Nuevo.",
@@ -222,9 +217,6 @@ const FAQ = [
     "Category": "Administración"
   }
 ];
-</script>
-
-
 
 /* ========= Utilidades de matching ========= */
 function tokenize(s){
@@ -298,13 +290,12 @@ function typingOff(){
 function showSuggestions(){
   suggestions.innerHTML = '';
   const tops = [
-  "¿Cómo cambio mi contraseña?",
-  "¿Cómo abro un ticket de Incidencias?",
-  "¿Cómo solicito material de oficina?",
-  "¿Cómo accedo a la base de datos del centro?",
-  "Solicitar vacaciones"
-];
-  
+    "¿Cómo cambio mi contraseña?",
+    "¿Cómo abro un ticket de Incidencias?",
+    "¿Cómo solicito material de oficina?",
+    "¿Cómo accedo a la base de datos del centro?",
+    "Solicitar vacaciones"
+  ];
   tops.forEach(text=>{
     const b = document.createElement('button');
     b.className='chip'; b.textContent=text; b.setAttribute('aria-label', 'Sugerencia: ' + text);
@@ -327,7 +318,7 @@ function ask(){
     typingOff();
 
     if(matches.length===0){
-      addRow('No he encontrado una respuesta exacta. Prueba reformular la pregunta o consulta la sección de RRHH/IT en la intranet.');
+      addRow('No he encontrado una respuesta exacta. Prueba reformular la pregunta o consulta la sección correspondiente en la intranet.');
       const sample = FAQ.slice(0,4).map(i=>`• <strong>${i.Title}</strong>`).join('<br>');
       addRow('<b>Preguntas relacionadas:</b><br>' + sample);
       return;
@@ -358,6 +349,8 @@ addRow('¡Hola! 👋 Puedo ayudarte con dudas sobre IT, RRHH, Formación y Admin
 </script>
 </body>
 </html>
+
+
 
 
 
